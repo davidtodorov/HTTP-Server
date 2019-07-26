@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
-    <Folder Include="Enums\" />
     <Folder Include="Excceptions\" />
     <Folder Include="Extensions\" />
     <Folder Include="Headers\" />
