@@ -21,7 +21,7 @@ namespace SIS.HTTP.Headers
 
         public override string ToString()
         {
-            return $"{this.Key} {this.Value}";
+            return $"{this.Key}: {this.Value}";
         }
     }
 }

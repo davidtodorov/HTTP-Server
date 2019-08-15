@@ -35,7 +35,7 @@ namespace SIS.HTTP.Headers
 
         public override string ToString()
         {
-            return String.Join("\r\n", this.headers.Values.Select(h => h.ToString()));
+            return String.Join(Environment.NewLine, this.headers.Values.Select(h => h.ToString()));
         }
     }
 }
