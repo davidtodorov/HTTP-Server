@@ -35,7 +35,7 @@ namespace SIS.HTTP.Requests
         public IHttpHeaderCollection Headers { get; private set; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
-
+         
         private void ParseRequest(string requestString)
         {
             var splitRequestContent = requestString
@@ -117,7 +117,10 @@ namespace SIS.HTTP.Requests
                 .Split('&')
                 .Select(queryParameter => queryParameter.Split('='))
                 .ToList()
-                .ForEach(queryKvp => this.QueryData.Add(queryKvp[1], queryKvp[2]));
+                .ForEach(queryKvp =>
+                {
+                    AddQueryParametersToDictionary(queryKvp, this.QueryData);
+                });
         }
 
         private void ParseRequestFormDataParameters(string requestBody)
@@ -130,19 +133,24 @@ namespace SIS.HTTP.Requests
                 .ToList()
                 .ForEach(queryKvp =>
                 {
-                    var paramKey = queryKvp[0];
-                    var paramValue = queryKvp[1];
-                    if (this.FormData.ContainsKey(paramKey))
-                    {
-                        var formDataValue = this.FormData[paramKey];
-                        var paramList = new List<object> {formDataValue, paramValue};
-                        this.FormData[paramKey] = paramList;
-                    }
-                    else
-                    {
-                        this.FormData.Add(queryKvp[1], queryKvp[2]);
-                    }
+                    AddQueryParametersToDictionary(queryKvp, this.FormData);
                 });
+        }
+
+        private void AddQueryParametersToDictionary(string[] queryKvp, Dictionary<string, object> dictWithParams)
+        {
+            var paramKey = queryKvp[0];
+            var paramValue = queryKvp[1];
+            if (dictWithParams.ContainsKey(paramKey))
+            {
+                var formDataValue = dictWithParams[paramKey];
+                var paramList = new List<object> { formDataValue, paramValue };
+                dictWithParams[paramKey] = paramList;
+            }
+            else
+            {
+                dictWithParams.Add(queryKvp[1], queryKvp[2]);
+            }
         }
 
         private bool IsValidRequestQueryString(string queryString, string[] queryParameters)
