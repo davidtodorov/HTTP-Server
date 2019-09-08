@@ -29,12 +29,33 @@ namespace SIS.HTTP.Responses
         public byte[] Content { get; set; }
         public void AddHeader(HttpHeader header)
         {
-            return;
+            CoreValidator.ThrowIfNull(header, nameof(header));
+            this.Headers.AddHeader(header);
         }
 
         public byte[] GetBytes()
         {
-            throw new NotImplementedException();
+            var httpResponseWithoutBody = Encoding.UTF8.GetBytes(this.ToString());
+            var httpResponseResult = new byte[httpResponseWithoutBody.Length + this.Content.Length];
+            httpResponseWithoutBody.CopyTo(httpResponseResult, 0);
+            this.Content.CopyTo(httpResponseResult, httpResponseWithoutBody.Length);
+
+            return httpResponseResult;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+
+            result
+                .Append($"{GlobalConstants.HTTpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}")
+                .Append(GlobalConstants.HttpNewLine)
+                .Append(this.Headers)
+                .Append(GlobalConstants.HttpNewLine);
+
+            result.Append(GlobalConstants.HttpNewLine);
+
+            return result.ToString();
         }
     }
 }
